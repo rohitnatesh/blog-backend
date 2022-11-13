@@ -1,15 +1,16 @@
-const defaultDao = require("../dao/defaultDao");
+const defaultDao = require('../dao/defaultDao');
 
 let getCommentsForArticle = function (articleId) {
   const commentsArtPromise = new Promise((resolve, reject) => {
     const connection = defaultDao.getDatabaseConnection();
     let comments = [];
     connection.connect();
-    let sql = "SELECT * FROM comment natural join people WHERE aid = ?";
+    let sql =
+      'SELECT * FROM comment natural join people WHERE aid = ? ORDER BY comment_time ASC';
 
     connection.query(sql, [articleId], (err, rows, fields) => {
       if (err) {
-        console.log("Error encountered when getting comments!!!!");
+        console.log('Error encountered when getting comments!!!!');
         reject(err);
       }
 
@@ -25,7 +26,7 @@ let getCommentsForArticle = function (articleId) {
         });
         resolve(comments);
       }
-      console.log("Closing connection...");
+      console.log('Closing connection...');
       connection.end();
     });
   });

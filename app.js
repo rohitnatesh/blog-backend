@@ -1,16 +1,17 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require('cors');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var articlesRouter = require('./routes/articles');
-var commentsRouter = require('./routes/comments');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const articlesRouter = require('./routes/articles');
+const commentsRouter = require('./routes/comments');
+const categoriesRouter = require('./routes/categories');
 
-var app = express();
+const app = express();
 
 app.use(
   cors({
@@ -39,6 +40,7 @@ app.use('/api/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/articles', articlesRouter);
 app.use('/api/comments', commentsRouter);
+app.use('/api/categories', categoriesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

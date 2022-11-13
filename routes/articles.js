@@ -35,7 +35,7 @@ router.get('/:id', (req, res) => {
       if (checkAgeRestriction(currentUser, article)) {
         res.status(200).send(article);
       } else {
-        res.status(403).send({ error: 'PERMISSIONDENIED' });
+        res.status(403).send({ error: 'AGE_RESTRICTION' });
       }
     }).catch((err) => {
       res.status(500).send('Internal Server Error');
@@ -48,7 +48,7 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res, next) => {
   if (req.cookies.data) {
     const userData = JSON.parse(req.cookies.data);
-    const p = articleService.createArticle(req, userData.id);
+    const p = articleService.createArticle(req, userData);
     p.then((articleId) => {
       res.status(200).send({ id: articleId });
     }).catch((err) => {

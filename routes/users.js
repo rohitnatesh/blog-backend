@@ -10,7 +10,7 @@ router.post('/login', function (req, res, next) {
   p.then((user) => {
     const age = ageService.getAge(user.birthdate);
     user.age = age;
-    // TODO: Use JWT
+
     res.cookie('data', JSON.stringify(user), {
       secure: true,
       sameSite: 'none',
@@ -25,7 +25,10 @@ router.post('/login', function (req, res, next) {
 /* Logout */
 router.post('/logout', function (req, res, next) {
   if (req.cookies.data) {
-    res.clearCookie('data');
+    res.clearCookie('data', {
+      secure: true,
+      sameSite: 'none',
+    });
     res.status(200).send();
   } else {
     res.status(401).send({ error: 'UNAUTHORIZED' });
@@ -33,10 +36,16 @@ router.post('/logout', function (req, res, next) {
 });
 
 router.post('/createUser', (req, res, next) => {
-  //TODO: validate all fields available and correct
   console.log('Prompted to create user');
   const p = userService.createUser(req);
   p.then((user) => {
+    const age = ageService.getAge(user.birthdate);
+    user.age = age;
+
+    res.cookie('data', JSON.stringify(user), {
+      secure: true,
+      sameSite: 'none',
+    });
     res.status(200).send(user);
   }).catch((err) => {
     if (err.code == 'ER_DUP_ENTRY') {

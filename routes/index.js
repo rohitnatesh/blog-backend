@@ -20,6 +20,4 @@ router.get('/count', function (req, res, next) {
   }
 });
 
-router.get('/categories', function (req, res, next) {});
-
 module.exports = router;

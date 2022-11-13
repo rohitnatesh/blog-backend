@@ -1,14 +1,14 @@
-var express = require("express");
-const defaultDao = require("../dao/defaultDao");
+var express = require('express');
+const defaultDao = require('../dao/defaultDao');
 
 let getCredentials = function (req) {
   const credPromise = new Promise((reslv, rejct) => {
     const connection = defaultDao.getDatabaseConnection();
     let users = [];
-    console.log("body:" + req.body.email);
+    console.log('body:' + req.body.email);
     connection.connect();
     let sql =
-      "SELECT uid, email from credential where BINARY email = ? and BINARY password = ?";
+      'SELECT uid, email from credential where BINARY email = ? and BINARY password = ?';
 
     connection.query(
       sql,
@@ -16,7 +16,7 @@ let getCredentials = function (req) {
       (err, rows, fields) => {
         console.log(sql, [req.body.email, req.body.password]);
         if (err) {
-          console.log("Error encountered!!!!");
+          console.log('Error encountered!!!!');
           rejct(err);
         }
 
@@ -27,7 +27,7 @@ let getCredentials = function (req) {
           });
           reslv(users);
         }
-        console.log("Closing connection...");
+        console.log('Closing connection...');
         connection.end();
       }
     );
@@ -40,10 +40,10 @@ let getUser = function (id) {
     const connection = defaultDao.getDatabaseConnection();
     connection.connect();
     let sql =
-      "SELECT uid, uname, birthdate, gender, email from people natural join credential where uid = ?";
+      'SELECT uid, uname, birthdate, gender, email from people natural join credential where uid = ?';
     connection.query(sql, [id], (err, rows, fields) => {
       if (err) {
-        console.log("Error encountered!!!!");
+        console.log('Error encountered!!!!');
         reject(err);
       }
       if (rows) {
@@ -55,12 +55,12 @@ let getUser = function (id) {
           birthdate: user.birthdate,
           gender: user.gender,
         };
-        console.log("CurUser:" + JSON.stringify(userProfile));
-        console.log("Closing connection...");
+        console.log('CurUser:' + JSON.stringify(userProfile));
+        console.log('Closing connection...');
         connection.end();
         resolve(userProfile);
       } else {
-        console.log("Closing connection...");
+        console.log('Closing connection...');
         connection.end();
       }
     });
@@ -72,13 +72,13 @@ let createPerson = function (req) {
   return new Promise((resolve, reject) => {
     const connection = defaultDao.getDatabaseConnection();
     connection.connect();
-    let sql1 = "insert into people values (NULL, ?, ?, ?)";
+    let sql1 = 'insert into people values (NULL, ?, ?, ?)';
     connection.query(
       sql1,
       [req.body.username, req.body.birthdate, req.body.gender],
       (err, result) => {
         if (err) {
-          console.log("Error enouncter when creating User!!!!");
+          console.log('Error encounter when creating User!!!!');
           reject(err);
         }
 
@@ -87,13 +87,13 @@ let createPerson = function (req) {
 
           let insertId = result.insertId;
 
-          console.log("created people with userID" + insertId);
+          console.log('created people with userID' + insertId);
           // reuse the same connection
           let credPromise = createCredential(connection, req, insertId);
 
           credPromise
             .then((credentialUserId) => {
-              console.log("Completed creating user: " + credentialUserId);
+              console.log('Completed creating user: ' + credentialUserId);
               resolve(credentialUserId);
             })
             .catch((err) => {
@@ -101,11 +101,11 @@ let createPerson = function (req) {
               reject(err);
             })
             .finally(() => {
-              console.log("Closing connection...");
+              console.log('Closing connection...');
               connection.end();
             });
         } else {
-          console.log("Closing connection...");
+          console.log('Closing connection...');
           connection.end();
         }
       }
@@ -115,7 +115,7 @@ let createPerson = function (req) {
 
 let createCredential = function (connection, req, userId) {
   return new Promise((resolve, reject) => {
-    let sql2 = "insert into credential values (?, ?, ?, ?, ?)";
+    let sql2 = 'insert into credential values (?, ?, ?, ?, ?)';
     connection.query(
       sql2,
       [
@@ -127,12 +127,12 @@ let createCredential = function (connection, req, userId) {
       ],
       (err, result) => {
         if (err) {
-          console.log("Error enountered when creating credential!!!!");
+          console.log('Error enountered when creating credential!!!!');
           reject(err);
         }
 
         if (result) {
-          console.log("Completed inserting credential");
+          console.log('Completed inserting credential');
           console.log(JSON.stringify(result));
           resolve(userId);
         }

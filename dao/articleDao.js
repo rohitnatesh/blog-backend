@@ -1,4 +1,3 @@
-var express = require('express');
 const defaultDao = require('../dao/defaultDao');
 const dateService = require('../services/dateService');
 
@@ -7,11 +6,11 @@ let getUserArticles = function (user) {
     const connection = defaultDao.getDatabaseConnection();
     let articles = [];
     let sql =
-      'select aid, title, uname, publish_time, catid, cname from article natural join people natural join category';
+      'select aid, title, uname, publish_time, catid, cname from article natural join people natural join category ORDER BY publish_time DESC';
 
     connection.query(sql, [user.id], (err, rows, fields) => {
       if (err) {
-        console.log('Error enouncter when getting Articles!!!!');
+        console.log('Error encounter when getting Articles!!!!');
         reject(err);
       }
 
@@ -42,11 +41,11 @@ let getArticle = function (articleId, user) {
   const articlePromise = new Promise((resolve, reject) => {
     const connection = defaultDao.getDatabaseConnection();
     let sql =
-      'select * from article natural join people natural join category where article.aid = ?';
+      'select * from article natural join people natural join category where article.aid = ? ORDER BY publish_time DESC';
     let article = {};
     connection.query(sql, [articleId], (err, rows, fields) => {
       if (err) {
-        console.log('Error enouncter when getting Article!!!!');
+        console.log('Error encounter when getting Article!!!!');
         reject(err);
       }
 
@@ -80,19 +79,19 @@ let getArticle = function (articleId, user) {
 let createArticle = function (req, user) {
   return new Promise((resolve, reject) => {
     const connection = defaultDao.getDatabaseConnection();
-    let sql = 'INSERT INTO article values (NULL, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO article values (NULL, ?, ?, ?, ?, ?)';
     connection.query(
       sql,
       [
         req.body.title,
         user.id,
         req.body.content,
-        req.body.publishTime,
+        dateService.getCurrentDatetime(),
         req.body.categoryId,
       ],
       (err, result) => {
         if (err) {
-          console.log('Error enouncter when creating Article!!!!');
+          console.log('Error encounter when creating Article!!!!');
           reject(err);
         }
 
@@ -118,7 +117,7 @@ let createComment = function (req, user) {
       [user.id, req.body.articleId, req.body.content, commentTime],
       (err, result) => {
         if (err) {
-          console.log('Error enouncter when creating Comment!!!!');
+          console.log('Error encounter when creating Comment!!!!');
           reject(err);
         }
 
@@ -143,10 +142,10 @@ let getArticlesByCategory = function (categoryId, user) {
     const connection = defaultDao.getDatabaseConnection();
     let articles = [];
     let sql =
-      'SELECT * FROM article natural join people natural join category where catid = ? and uid <> ?';
-    connection.query(sql, [categoryId, user.id], (err, rows) => {
+      'SELECT * FROM article natural join people natural join category where catid = ?';
+    connection.query(sql, [categoryId], (err, rows) => {
       if (err) {
-        console.log('Error enouncter when creating Comment!!!!');
+        console.log('Error encounter when creating Comment!!!!');
         reject(err);
       }
 
