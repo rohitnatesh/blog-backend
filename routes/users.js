@@ -26,7 +26,7 @@ router.post('/login', function (req, res, next) {
 router.post('/logout', function (req, res, next) {
   if (req.cookies.data) {
     res.clearCookie('data');
-    res.status(200);
+    res.status(200).send();
   } else {
     res.status(401).send({ error: 'UNAUTHORIZED' });
   }
