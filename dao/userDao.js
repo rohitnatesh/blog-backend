@@ -1,5 +1,6 @@
 var express = require('express');
 const defaultDao = require('../dao/defaultDao');
+var crypto = require('crypto');
 
 let getCredentials = function (req) {
   const credPromise = new Promise((reslv, rejct) => {
@@ -8,13 +9,17 @@ let getCredentials = function (req) {
     console.log('body:' + req.body.email);
     connection.connect();
     let sql =
-      'SELECT uid, email from credential where BINARY email = ? and BINARY password = ?';
+      'SELECT uid, email from credential where email = ? and password = ?';
+    const passwordHash = crypto
+      .createHash('sha512')
+      .update(req.body.password)
+      .digest('hex');
 
     connection.query(
       sql,
-      [req.body.email, req.body.password],
+      [req.body.email, passwordHash],
       (err, rows, fields) => {
-        console.log(sql, [req.body.email, req.body.password]);
+        console.log(sql, [req.body.email, passwordHash]);
         if (err) {
           console.log('Error encountered!!!!');
           rejct(err);
@@ -116,12 +121,17 @@ let createPerson = function (req) {
 let createCredential = function (connection, req, userId) {
   return new Promise((resolve, reject) => {
     let sql2 = 'insert into credential values (?, ?, ?, ?, ?)';
+    const passwordHash = crypto
+      .createHash('sha512')
+      .update(req.body.password)
+      .digest('hex');
+    console.log(passwordHash);
     connection.query(
       sql2,
       [
         userId,
         req.body.email,
-        req.body.password,
+        passwordHash,
         req.body.securityQuestion,
         req.body.securityAnswer,
       ],
