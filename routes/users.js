@@ -13,7 +13,7 @@ router.post('/login', function (req, res, next) {
 
     res.cookie('data', JSON.stringify(user), {
       secure: true,
-      sameSite: 'none',
+      sameSite: 'strict',
     });
     res.status(200).send(user);
   }).catch((err) => {
@@ -27,7 +27,7 @@ router.post('/logout', function (req, res, next) {
   if (req.cookies.data) {
     res.clearCookie('data', {
       secure: true,
-      sameSite: 'none',
+      sameSite: 'strict',
     });
     res.status(200).send();
   } else {
@@ -44,7 +44,7 @@ router.post('/createUser', (req, res, next) => {
 
     res.cookie('data', JSON.stringify(user), {
       secure: true,
-      sameSite: 'none',
+      sameSite: 'strict',
     });
     res.status(200).send(user);
   }).catch((err) => {
